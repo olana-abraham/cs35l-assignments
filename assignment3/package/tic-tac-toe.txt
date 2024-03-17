@@ -1,0 +1,103 @@
+1. Create a React app in local directory
+	npx create-react-app {filename}
+	cd filename
+	npm start
+
+2. Create and format 9 tic tac toe squares by using the div and button elements:
+     <div className="board-row">
+        <button className="square">1</button>
+        <button className="square">2</button>
+        <button className="square">3</button>
+      </div>
+
+3. Create a new square component to reduce repetition. The square component should allow you pass in a prop called value:
+	function Square({ value }) {
+  		return <button className="square">{value}</button>;
+	}
+
+4. Import the useState function to set the value of the square to "X" when clicked:
+	import { useState } from 'react';
+
+	function Square() {
+  		const [value, setValue] = useState(null);
+
+5. Add a new prop to Square called onSquareClick that takes a function handling the click of each square
+	function Square({ value, onSquareClick }) {
+  		return (
+    			<button className="square" onClick={onSquareClick}>
+      				{value}
+   			</button>
+  		);
+	}
+
+6. Create a function handleClick that creates a new array to update the board state each time you click on a square:
+  	const [squares, setSquares] = useState(Array(9).fill(null));
+
+  	function handleClick() {
+    		const nextSquares = squares.slice();
+    		nextSquares[0] = "X";
+    		setSquares(nextSquares);
+  	}
+
+7. Create a boolean variable xIsNext used to switch between player turns:
+	const [xIsNext, setXIsNext] = useState(true);
+	  const [squares, setSquares] = useState(Array(9).fill(null));
+	
+	  function handleClick(i) {
+	    const nextSquares = squares.slice();
+	    if (xIsNext) {
+	      nextSquares[i] = "X";
+	    } else {
+	      nextSquares[i] = "O";
+	    }
+	    setSquares(nextSquares);
+	    setXIsNext(!xIsNext);
+	  }
+
+8. Create a calculateWinner function that checks if any of the cases for winning have occured. Call the function in handleClick to end the game if a player won. If the game is over print out the won or print next player if it's still going:
+	function calculateWinner(squares) {
+	  const lines = [
+	    [0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]
+	  ];
+	  for (let i = 0; i < lines.length; i++) {
+	    const [a, b, c] = lines[i];
+	    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+	      return squares[a];
+	    }
+	  }
+	  return null;
+	}
+
+9. Create a new top-level component called Game to display a list of past moves. Make the board component fully dependent by the props it recieves from Game:
+	export default function Game() {
+	  const [xIsNext, setXIsNext] = useState(true);
+	  const [history, setHistory] = useState([Array(9).fill(null)]);
+	  const currentSquares = history[history.length - 1];
+	
+	  return (
+	    <div className="game">
+	      <div className="game-board">
+	        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+	  )
+	}
+
+10. Use map to transform history of moves into buttons on the screen and use a key to identify each move:
+	const moves = history.map((squares, move) => {
+	    let description;
+	    if (move > 0) {
+	      description = 'Go to move #' + move;
+	    } else {
+	      description = 'Go to game start';
+	    }
+	    return (
+	      <li>
+	        <button onClick={() => jumpTo(move)}>{description}</button>
+	      </li>
+	    );
+	  });
+
+11. Create a jumpTo function so you can jump to any previous part of the game:
+  	function jumpTo(nextMove) {
+    		setCurrentMove(nextMove);
+    		setXIsNext(nextMove % 2 === 0);
+  	}
