@@ -1,0 +1,80 @@
+Starting with what I created for tic-tac-toe,
+
+The first addition I made was including a counter variable that tracks how many times a turn has been played. This is how I was able to track the first three moves of both players. If the counter reached 6 then I know both players have played there first three moves and therefore I can switch to the logic of chorus lapilli.
+  	const [counter, setCounter] = useState(0);
+    	if (counter > 5) {
+		// do chrous lapilli stuff
+	}
+	else {
+		// do tic tac toe suff
+	}
+
+The next thing I added were two variables called isMove and index. isMove is used to keep track of whether a 'X' or 'O' has been clicked and is waiting to be moved. index is used to store the initial position of the 'X' or 'O' that has been clicked. 
+	const [isMove, setIsMove] = useState(false);
+	const [index, setIndex] = useState(-1);
+
+One function I added was validMove(i, j) which takes in the initial postion and the potential position of an 'X' or 'A'. Essentially the function evaluates for each index whether the potential position is adjacent to the initial position.
+	function validMove(i, j) {
+    		if (i === 0) return j === 1 || j === 3 || j === 4;
+		else if (i === 1) return j === 0 || j === 2 || j === 4 || j === 3 || j === 5;
+		...
+	}
+
+The main changes I made were to the function handleClick(i) specifically in the case where the counter is greater than 5. First, I created a check to see if the first click corresponded to the correct symbol. If the first click is valid I return the function and setup for the second click. Then, I check to see if the second click is valid and update the board accordingly. If the second click is not valid the process is restarted. Lastly, I included a check to see if a symbol was occupying the center on the corresponding player's turn. If the next non-center move didn't result in a win then the function returns.
+	if (counter > 5) {
+	      if ((squares[i] == "X" && xIsNext) || (squares[i] == "O" && !xIsNext)) {
+	        setIsMove(true);
+	        setIndex(i);
+	        return;
+	      } else if (isMove) {
+	        if (validMove(index, i) && squares[i] == null) {
+	          nextSquares[i] = xIsNext ? "X" : "O";
+	          nextSquares[index] = null;
+	          setIsMove(false);
+	        } else {
+	          setIsMove(false);
+	          return;
+	        }
+	      } else return;
+	      if (
+	        ((squares[4] == "X" && xIsNext) || (squares[4] == "O" && !xIsNext)) &&
+	        index != 4
+	      ) {
+	        if (!calculateWinner(nextSquares)) {
+	          return;
+	        }
+	      }
+	    }
+
+npm pack --dry-run log:
+
+npm notice 📦  chorus-lapilli@0.1.0
+npm notice === Tarball Contents === 
+npm notice 3.4kB README.md             
+npm notice 2.6kB chorus-lapilli.txt    
+npm notice 817B  package.json          
+npm notice 3.9kB public/favicon.ico    
+npm notice 1.7kB public/index.html     
+npm notice 5.3kB public/logo192.png    
+npm notice 9.7kB public/logo512.png    
+npm notice 492B  public/manifest.json  
+npm notice 67B   public/robots.txt     
+npm notice 564B  src/App.css           
+npm notice 3.6kB src/App.js            
+npm notice 246B  src/App.test.js       
+npm notice 256B  src/index.js          
+npm notice 2.6kB src/logo.svg          
+npm notice 362B  src/reportWebVitals.js
+npm notice 241B  src/setupTests.js     
+npm notice 968B  src/styles.css        
+npm notice 8.7kB test_chorus_lapilli.py
+npm notice 3.6kB tic-tac-toe.txt       
+npm notice === Tarball Details === 
+npm notice name:          chorus-lapilli                          
+npm notice version:       0.1.0                                   
+npm notice filename:      chorus-lapilli-0.1.0.tgz                
+npm notice package size:  31.0 kB                                 
+npm notice unpacked size: 49.1 kB                                 
+npm notice shasum:        aca77413c42d4ecd68b4828f354727892b9e59ab
+npm notice integrity:     sha512-iUkTpG23FPFvN[...]+/gVCwZWHOeww==
+npm notice total files:   19 
